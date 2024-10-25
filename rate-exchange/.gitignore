@@ -81,9 +81,5 @@ dmypy.json
 *.db
 *.sqlite3
 
-# Docker
-docker-compose.yml
-Dockerfile
-
 # VSCode settings
 .vscode/
