@@ -8,6 +8,7 @@ import sources.sjc
 import sources.doji
 import sources.pnj
 from sources.base_source import Price
+from health_check import HealthCheck
 
 # Database configuration
 db_config = {
@@ -131,7 +132,10 @@ def get_price(company_code: str):
         return {"error": "Company not found"}
     
     code = company.company_code
-    price = company.get_price()
+    try:
+        price = company.get_price()
+    except Exception as e:
+        price = Price(buy=0, sell=0)
     if price is None or not isinstance(price, Price):
         price = Price(buy=0, sell=0)
     return {
@@ -147,3 +151,10 @@ def get_prices():
         companies_price.append(get_price(company))
 
     return companies_price
+
+@app.get("/status")
+def get_status():
+    status = []
+    for company in companies:
+        status.append(HealthCheck.source_check_status(companies[company]))
+    return status

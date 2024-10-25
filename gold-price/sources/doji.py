@@ -26,27 +26,26 @@ class DOJI(BaseSource):
         return 'https://doji.vn/bang-gia-vang/'
 
     def get_price(self) -> Price:
-        try:
-            headers = {'User-Agent': random.choice(self.User_Agent)}            
-            response = requests.get(self.url, headers=headers, verify=False)
-            response.raise_for_status()
+        headers = {'User-Agent': random.choice(self.User_Agent)}            
+        response = requests.get(self.url, headers=headers, verify=False)
+        response.raise_for_status()
     
-            soup = BeautifulSoup(response.text, 'html.parser')
-            
-            buy_price_element = soup.select_one("div._table:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(3)")
-            if buy_price_element is None:
-                raise ValueError("Cannot fetch buy price")
-            buy_price = int(buy_price_element.text.strip().replace(',', '')) * 1000 * 10
-    
-            sell_price_element = soup.select_one("div._table:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(3)")
-            if sell_price_element is None:
-                raise ValueError("Cannot fetch sell price")
-            sell_price = int(sell_price_element.text.strip().replace(',', '')) * 1000 * 10
-    
-            return Price(buy=buy_price, sell=sell_price)
-        except requests.exceptions.RequestException as request_exception:
-            print(request_exception)
-            return None
-        except ValueError as value_error:
-            print(value_error)
-            return None
+        if response.status_code != 200:
+            raise requests.exceptions.RequestException("Cannot connect to provider")
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        buy_price_element = soup.select_one("div._table:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(3)")
+        sell_price_element = soup.select_one("div._table:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(3)")
+        
+        if buy_price_element is None and sell_price_element is None:
+            raise ValueError("Cannot fetch buy and sell price")
+        elif buy_price_element is None:
+            raise ValueError("Cannot fetch buy price")
+        elif sell_price_element is None:
+            raise ValueError("Cannot fetch sell price")
+        
+        buy_price = int(buy_price_element.text.strip().replace(',', '')) * 1000 * 10
+        sell_price = int(sell_price_element.text.strip().replace(',', '')) * 1000 * 10
+
+        return Price(buy=buy_price, sell=sell_price)

@@ -26,18 +26,17 @@ class SJC(BaseSource):
         return 'https://sjc.com.vn/GoldPrice/Services/PriceService.ashx'
 
     def get_price(self) -> Price:
+        headers = {'User-Agent': random.choice(self.User_Agent)}
+        response = requests.post(self.url, headers=headers)
+        response.raise_for_status()
+        response_json = json.loads(response.text)
+        if response.status_code != 200:
+            raise requests.exceptions.RequestException("Cannot connect to provider")
+        
         try:
-            headers = {'User-Agent': random.choice(self.User_Agent)}
-            response = requests.post(self.url, headers=headers)
-            response.raise_for_status()
-            response_json = json.loads(response.text)
             buy_price = int(response_json['data'][0]['BuyValue'])
             sell_price = int(response_json['data'][0]['SellValue'])
+        except Exception as e:
+            raise ValueError("Cannot fetch buy and sell price")
 
-            return Price(buy=buy_price, sell=sell_price)
-        except requests.exceptions.RequestException as request_exception:
-            print(request_exception)
-            return None
-        except ValueError as value_error:
-            print(value_error)
-            return None
+        return Price(buy=buy_price, sell=sell_price)
