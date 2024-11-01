@@ -1,9 +1,9 @@
+import json
+import random
 from sources.base_source import BaseSource, Price
 import requests
-import random
-from bs4 import BeautifulSoup
 
-class PNJ(BaseSource):
+class SJC(BaseSource):
     User_Agent = [
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3', 
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Safari/605.1.15', 
@@ -16,36 +16,28 @@ class PNJ(BaseSource):
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0', 
         'Mozilla/5.0 (Linux; U; Android 9; en-US; SM-J600G Build/PPR1.180610.011) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/74.0.3729.157 Mobile Safari/537.36'
     ]
-
+        
     @property
     def company_code(self):
-        return 'PNJ'
-
+        return 'SJC'
+    
     @property
     def url(self):
-        return 'https://www.pnj.com.vn/blog/gia-vang/'
+        return 'https://sjc.com.vn/GoldPrice/Services/PriceService.ashx'
 
     def get_price(self) -> Price:
-        headers = {'User-Agent': random.choice(self.User_Agent)}
-        response = requests.get(self.url, headers=headers)
-        response.raise_for_status()
+        try:
+            headers = {'User-Agent': random.choice(self.User_Agent)}
+            response = requests.post(self.url, headers=headers)
+            response.raise_for_status()
+            response_json = json.loads(response.text)
+            buy_price = int(response_json['data'][0]['BuyValue'])
+            sell_price = int(response_json['data'][0]['SellValue'])
 
-        if response.status_code != 200:
-            raise requests.exceptions.RequestException("Cannot connect to provider")
-
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        buy_price_element = soup.select_one("#content-price > tr:nth-child(2) > td:nth-child(2) > span:nth-child(1)")
-        sell_price_element = soup.select_one("#content-price > tr:nth-child(2) > td:nth-child(3) > span:nth-child(1)")
-
-        if buy_price_element is None and sell_price_element is None:
-            raise ValueError("Cannot fetch buy and sell price")
-        elif buy_price_element is None:
-            raise ValueError("Cannot fetch buy price")
-        elif sell_price_element is None:
-            raise ValueError("Cannot fetch sell price")
-        
-        buy_price = int(buy_price_element.text.strip().replace(',', '')) * 1000 * 10
-        sell_price = int(sell_price_element.text.strip().replace(',', '')) * 1000 * 10
-
-        return Price(buy=buy_price, sell=sell_price)
+            return Price(buy=buy_price, sell=sell_price)
+        except requests.exceptions.RequestException as request_exception:
+            print(request_exception)
+            return None
+        except ValueError as value_error:
+            print(value_error)
+            return None

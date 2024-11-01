@@ -1,15 +1,13 @@
 import os
 import time
-from fastapi import FastAPI, status
+from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
-from fastapi.responses import JSONResponse
 import psycopg2
 import sources.sjc
 import sources.doji
 import sources.pnj
 from sources.base_source import Price
-from health_check import HealthCheck
 
 # Database configuration
 db_config = {
@@ -112,7 +110,7 @@ async def lifespan(app: FastAPI):
 
     # Yield to allow the app to run
     yield
-    print("Alicesss")
+
     # Shutdown code: stop the scheduler and close the database connection
     if db_connection is not None:
         db_connection.close()
@@ -122,7 +120,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-@app.get("/companies", status_code = status.HTTP_200_OK)
+@app.get("/companies")
 def get_companies():
     return list(companies.keys())
 
@@ -133,10 +131,7 @@ def get_price(company_code: str):
         return {"error": "Company not found"}
     
     code = company.company_code
-    try:
-        price = company.get_price()
-    except Exception as e:
-        price = Price(buy=0, sell=0)
+    price = company.get_price()
     if price is None or not isinstance(price, Price):
         price = Price(buy=0, sell=0)
     return {
@@ -152,27 +147,3 @@ def get_prices():
         companies_price.append(get_price(company))
 
     return companies_price
-
-@app.get("/status/apis")
-async def get_apis_status():
-    status = []
-    for company in companies:
-        status.append(HealthCheck.source_check_status(companies[company]))
-    return status
-
-@app.get("/status/containers")
-async def get_container_status():
-    status = {}
-    status["system"] = []
-    status["system"].append(HealthCheck.get_kernel_info())
-    status["system"].append(HealthCheck.get_system_uptime())
-    status["cpu"] = HealthCheck.get_cpu_info()
-    status["memory"] = HealthCheck.get_memory_info()
-    status["disk"] = HealthCheck.get_disk_info()
-    status["network"] = HealthCheck.get_network_info()
-    return status
-
-@app.get("/status/containers/processes")
-async def get_container_processes():
-    return JSONResponse(HealthCheck.get_process_info())
-

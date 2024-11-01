@@ -23,29 +23,30 @@ class PNJ(BaseSource):
 
     @property
     def url(self):
-        return 'https://www.pnj.com.vn/blog/gia-vang/'
+        return 'https://www.pnj.com.vn/blog/gia-vang/?r=1727711690557'
 
     def get_price(self) -> Price:
-        headers = {'User-Agent': random.choice(self.User_Agent)}
-        response = requests.get(self.url, headers=headers)
-        response.raise_for_status()
-
-        if response.status_code != 200:
-            raise requests.exceptions.RequestException("Cannot connect to provider")
-
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        buy_price_element = soup.select_one("#content-price > tr:nth-child(2) > td:nth-child(2) > span:nth-child(1)")
-        sell_price_element = soup.select_one("#content-price > tr:nth-child(2) > td:nth-child(3) > span:nth-child(1)")
-
-        if buy_price_element is None and sell_price_element is None:
-            raise ValueError("Cannot fetch buy and sell price")
-        elif buy_price_element is None:
-            raise ValueError("Cannot fetch buy price")
-        elif sell_price_element is None:
-            raise ValueError("Cannot fetch sell price")
-        
-        buy_price = int(buy_price_element.text.strip().replace(',', '')) * 1000 * 10
-        sell_price = int(sell_price_element.text.strip().replace(',', '')) * 1000 * 10
-
-        return Price(buy=buy_price, sell=sell_price)
+        try:
+            headers = {'User-Agent': random.choice(self.User_Agent)}
+            response = requests.get(self.url, headers=headers)
+            response.raise_for_status()
+    
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            buy_price_element = soup.select_one("#content-price > tr:nth-child(2) > td:nth-child(2) > span:nth-child(1)")
+            if buy_price_element is None:
+                raise ValueError("Cannot fetch buy price")
+            buy_price = int(buy_price_element.text.strip().replace(',', '')) * 1000 * 10
+    
+            sell_price_element = soup.select_one("#content-price > tr:nth-child(2) > td:nth-child(3) > span:nth-child(1)")
+            if sell_price_element is None:
+                raise ValueError("Cannot fetch sell price")
+            sell_price = int(sell_price_element.text.strip().replace(',', '')) * 1000 * 10
+    
+            return Price(buy=buy_price, sell=sell_price)
+        except requests.exceptions.RequestException as request_exception:
+            print(request_exception)
+            return None
+        except ValueError as value_error:
+            print(value_error)
+            return None
