@@ -1,6 +1,8 @@
 from banks import apithanhtoan
 from fastapi import FastAPI, HTTPException
 from banks.dataclasses import Bank, ExchangeRate
+from dataclasses import asdict
+from health_check import HealthCheck
 
 app = FastAPI()
 
@@ -31,10 +33,11 @@ def get_exchange_rates():
     result = []
     for bank in banks:
         try:
-            result.append({
-                "success": True,
-                **banks[bank].get_exchange_rate()
-            })
+            response_data = {
+                "success": True, 
+                **asdict(get_exchange_rate(bank))
+            }
+            result.append(response_data)
         except Exception as e:
             result.append({
                 "success": False, 
@@ -42,3 +45,7 @@ def get_exchange_rates():
                 "error": str(e)
             })
     return result
+
+@app.get("/status")
+def get_status():
+    return [HealthCheck.source_check_status(bank) for bank in banks.values()]
