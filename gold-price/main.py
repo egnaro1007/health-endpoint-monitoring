@@ -174,5 +174,5 @@ async def get_container_status():
 
 @app.get("/status/containers/processes")
 async def get_container_processes():
-    return JSONResponse(HealthCheck.get_process_info())
+    return HealthCheck.get_process_info()
 

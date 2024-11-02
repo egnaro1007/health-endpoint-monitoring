@@ -20,22 +20,38 @@ class Status:
 class HealthCheck:
     @staticmethod
     def source_check_status(obj: BaseSource) -> Status:
+        # code = obj.company_code
+        # provider_connection = ""
+        # parse_data = ""
+        # data_response = ""
+
+        # try:
+        #     price = obj.get_price()
+        #     if price is None or not isinstance(price, Price):
+        #         data_response = "Error when fetching Data"
+        #     else:
+        #         data_response = JSONResponse(price).body
+        # except RequestException:
+        #     provider_connection = "Failed to connect, please re-check the config"
+        #     # parse_data = False
+        # except ValueError:
+        #     parse_data = "Data is not in valid format"
+
+        # return Status(code, provider_connection, parse_data, data_response)
         code = obj.company_code
-        provider_connection = ""
-        parse_data = ""
-        data_response = ""
+        provider_connection = True
+        parse_data = True
+        data_response = True
 
         try:
             price = obj.get_price()
             if price is None or not isinstance(price, Price):
-                data_response = "Error when fetching Data"
-            else:
-                data_response = JSONResponse(price)
+                data_response = False
         except RequestException:
-            provider_connection = "Failed to connect, please re-check the config"
-            # parse_data = False
+            provider_connection = False
+            parse_data = False
         except ValueError:
-            parse_data = "Data is not in valid format"
+            parse_data = False
 
         return Status(code, provider_connection, parse_data, data_response)
     
