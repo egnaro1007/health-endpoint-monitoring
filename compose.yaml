@@ -131,14 +131,16 @@ services:
     container_name: grafana
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=grafana
-    # volumes:
-    #   - ./:/var/lib/grafana
+    volumes:
+      - ./grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/main.yaml
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/grafana.db:/var/lib/grafana/grafana.db
     depends_on:
       - prometheus
     ports:
       - 3000:3000
     command:
-      - ["grafana", "cli", "plugins", "install", "marcusolsson-json-datasource"]
+      - "grafana cli plugins install marcusolsson-json-datasource"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000", "||", "exit", "1"]
       interval: 1m
@@ -157,3 +159,13 @@ services:
   #     - ./alertmanager_data:/etc/alertmanager
   #   command:
   #     - --config.file=/etc/alertmanager/alertmanager.yml
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    volumes:
+      - ./node-exporter:/etc/nodeexporter
+    command: 
+      - '--path.rootfs=/etc/nodeexporter'
+    expose:
+      - 9100:9100
