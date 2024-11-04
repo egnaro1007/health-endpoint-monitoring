@@ -1,0 +1,33 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: "codelab-monitor"
+
+rule_files:
+  - /etc/prometheus/rules.yml
+
+# alerting:
+#   alertmanagers:
+#   - static_configs:
+#     - targets:
+#        - alertmanager:9093
+
+scrape_configs:
+  - job_name: 'docker'
+    static_configs:
+      - targets:
+        - host.docker.internal:9323
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: 
+        - prometheus:9090
+  - job_name: 'cadvisor'      # Prometheus taking data from cAdvisor
+    scrape_interval: 5s
+    static_configs:
+      - targets: 
+        - cadvisor:8080
+  - job_name: 'node-exporter'      # Prometheus taking data from cAdvisor
+    static_configs:
+      - targets: 
+        - node-exporter:9100
