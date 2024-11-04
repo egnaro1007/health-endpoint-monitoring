@@ -77,8 +77,8 @@ services:
     expose:
       - "5432"
     volumes:
-      - database_data:/var/lib/postgresql/data
       - ./init_postgres.sql:/docker-entrypoint-initdb.d/init_postgres.sql
+      - database_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
       interval: 60s
@@ -90,7 +90,7 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     volumes:
-      - ./prometheus_data:/etc/prometheus
+      - ./prometheus:/etc/prometheus
     ports:
       - 9090:9090
     command: 
@@ -134,7 +134,7 @@ services:
     volumes:
       - ./grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/main.yaml
       - ./grafana/dashboards:/var/lib/grafana/dashboards
-      - ./grafana/grafana.db:/var/lib/grafana/grafana.db
+      - ./grafana/grafana.ini:/var/lib/grafana/grafana.ini
     depends_on:
       - prometheus
     ports:
@@ -156,7 +156,7 @@ services:
   #   ports:
   #     - 9093:9093
   #   volumes:
-  #     - ./alertmanager_data:/etc/alertmanager
+  #     - ./alertmanager:/etc/alertmanager
   #   command:
   #     - --config.file=/etc/alertmanager/alertmanager.yml
 

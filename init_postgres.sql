@@ -1,4 +1,5 @@
 CREATE DATABASE statistic_log;
+CREATE DATABASE metric_log;
 -- Connect to the newly created database (this is important)
 \c statistic_log;
 
