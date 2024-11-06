@@ -1,6 +1,6 @@
-version: '3'
 volumes:
   database_data:
+  prometheus:
 services:
   nginx:
     image: nginx:latest
@@ -90,11 +90,13 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     volumes:
-      - ./prometheus:/etc/prometheus
+      - ./prometheus:/etc/prometheus/
+      - prometheus:/prometheus
     ports:
       - 9090:9090
     command: 
       - --config.file=/etc/prometheus/prometheus.yml
+      - '--storage.tsdb.path=/prometheus'
     depends_on:
       - cadvisor
     healthcheck:
@@ -129,18 +131,21 @@ services:
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
+    user: root
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=grafana
     volumes:
       - ./grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/main.yaml
+      - ./grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
       - ./grafana/dashboards:/var/lib/grafana/dashboards
-      - ./grafana/grafana.ini:/var/lib/grafana/grafana.ini
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
     depends_on:
       - prometheus
     ports:
       - 3000:3000
     command:
       - "grafana cli plugins install marcusolsson-json-datasource"
+      - --config=/etc/grafana/grafana.ini
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000", "||", "exit", "1"]
       interval: 1m
