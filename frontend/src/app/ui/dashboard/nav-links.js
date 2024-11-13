@@ -6,6 +6,7 @@ import {
   DocumentDuplicateIcon,
   BanknotesIcon,
   CircleStackIcon,
+  ChartBarIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -21,6 +22,11 @@ const links = [
     icon: CircleStackIcon,
   },
   { name: 'Exchange Rates', href: '/dashboard/exchangerates', icon: BanknotesIcon },
+  {
+    name: 'Metrics',
+    href: '/dashboard/metrics',
+    icon: ChartBarIcon,
+  }
 ];
 
 export default function NavLinks() {
