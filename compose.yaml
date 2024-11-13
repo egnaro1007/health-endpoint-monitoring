@@ -172,6 +172,7 @@ services:
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
     depends_on:
       - prometheus
+      - database
     ports:
       - 3000:3000
     command:
