@@ -4,16 +4,47 @@ volumes:
 services:
   nginx:
     image: nginx:latest
-    container_name: nginx-reverse-proxy
+    container_name: nginx
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf  # Mount the Nginx config file
+      # - ./nginx.conf:/etc/nginx/conf.d/default.conf  # Mount the Nginx config file
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Mount the Nginx config file
     depends_on:
       - gold-price
       - rate-exchange
     healthcheck:
       test: ["CMD", "service", "nginx", "status", "||", "exit", "1"]
+      interval: 1m
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  nginx-prometheus-exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: nginx-prometheus-exporter
+    ports: 
+      - 9113:9113
+    command: 
+      - --nginx.scrape-uri=http://nginx:80/stub_status
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9113/metrics", "||", "exit", "1"]
+      interval: 1m
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+  
+  fluentd:
+    build: ./fluentd
+    container_name: fluentd
+    ports: 
+      - 24231:24231
+    volumes:
+      - ./fluentd/fluent.conf:/etc/fluent/fluent.conf
+    command: 
+      - --config=/etc/fluent/fluent.conf
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:24231/metrics", "||", "exit", "1"]
       interval: 1m
       timeout: 5s
       retries: 5
@@ -53,8 +84,8 @@ services:
       - DB_HOST=database
       - DB_PORT=5432
       - DB_NAME=statistic_log
-      - DB_USER=statistic_user
-      - DB_PASSWORD=statistic_password
+      - DB_USER=postgres
+      - DB_PASSWORD=ppaasssswwoorrdd
     expose:
       - "8000"
     depends_on:
@@ -121,7 +152,7 @@ services:
       - gold-price
       - rate-exchange
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080", "||", "exit", "1"]
+      test: ["CMD", "wget", "--spider", "--timeout=10", "http://localhost:8080"]
       interval: 1m
       timeout: 5s
       retries: 5
@@ -147,7 +178,7 @@ services:
       - "grafana cli plugins install marcusolsson-json-datasource"
       - --config=/etc/grafana/grafana.ini
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000", "||", "exit", "1"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health", "||", "exit", "1"]
       interval: 1m
       timeout: 5s
       retries: 5
@@ -174,3 +205,16 @@ services:
       - '--path.rootfs=/etc/nodeexporter'
     expose:
       - 9100:9100
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9100/metrics", "||", "exit", "1"]
+      interval: 1m
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+  
+  front-end:
+    build: ./frontend
+    image: front-end/health-monitoring:1.0.0
+    container_name: front-end
+    expose:
+      - "3000"

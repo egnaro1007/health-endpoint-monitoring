@@ -18,6 +18,14 @@ scrape_configs:
     static_configs:
       - targets:
         - host.docker.internal:9323
+  - job_name: 'nginx-prometheus-exporter'      
+    static_configs:
+      - targets: 
+        - nginx-prometheus-exporter:9113
+  - job_name: 'fluentd'      
+    static_configs:
+      - targets: 
+        - fluentd:24231
   - job_name: 'prometheus'
     static_configs:
       - targets: 
