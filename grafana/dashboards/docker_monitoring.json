@@ -21,7 +21,7 @@
       }
     ]
   },
-  "description": "Dashboard with details of the containers and host metrics for Raspberry Pi by Oijkn.",
+  "description": "Dashboard with host and containers metrics.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -3087,8 +3087,8 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Raspberry Pi & Docker Monitoring",
-  "uid": "VKtkKcAVz",
+  "title": "Host & Docker Monitoring",
+  "uid": "EgnaroDAS",
   "version": 1,
   "weekStart": ""
 }
