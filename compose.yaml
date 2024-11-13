@@ -67,15 +67,7 @@ services:
       - database
     volumes:
       - ./gold-price:/app
-    healthcheck:
-      # TODO: Implement health check for APIs services here
-      test: ["CMD", "curl", "-f", "http://localhost:8000", "||", "exit", "1"]
-      interval: 1m
-      timeout: 5s
-      retries: 5
-      start_period: 30s
 
-  # rate-exchange folder
   rate-exchange:
     build: ./rate-exchange
     image: rate-exchange/rate-exchange-vnd:1.1.0
@@ -92,17 +84,11 @@ services:
       - database
     volumes:
       - ./rate-exchange:/app
-    healthcheck:
-      # TODO: Implement health check for APIs services here
-      test: ["CMD", "curl", "-f", "http://localhost:8000", "||", "exit", "1"]
-      interval: 1m
-      timeout: 5s
-      retries: 5
-      start_period: 30s
 
   database:
     image: postgres:latest
     container_name: postgres_database
+    user: postgres
     environment:
       - POSTGRES_PASSWORD=ppaasssswwoorrdd
     expose:
@@ -130,12 +116,13 @@ services:
       - '--storage.tsdb.path=/prometheus'
     depends_on:
       - cadvisor
+      - node_exporter
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9090", "||", "exit", "1"]
-      interval: 1m
-      timeout: 5s
+      test: ["CMD", "wget", "--spider", "--timeout=10", "http://localhost:9090"]
+      start_period: 10s
+      timeout: 10s
       retries: 5
-      start_period: 30s
+      interval: 30s
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
@@ -148,15 +135,11 @@ services:
       # - /dev/disk/:/dev/disk:ro
     ports:
       - 8080:8080
-    depends_on:
-      - gold-price
-      - rate-exchange
     healthcheck:
       test: ["CMD", "wget", "--spider", "--timeout=10", "http://localhost:8080"]
       interval: 1m
       timeout: 5s
       retries: 5
-      start_period: 30s
 
 #TODO: where and how to save historical data for retrieve at times when servers supposed to down
   grafana:
@@ -183,19 +166,6 @@ services:
       interval: 1m
       timeout: 5s
       retries: 5
-      start_period: 30s
-
-  # alertmanager:
-  #   image: prom/alertmanager:latest
-  #   container_name: alertmanager
-  #   depends_on:
-  #     - prometheus
-  #   ports:
-  #     - 9093:9093
-  #   volumes:
-  #     - ./alertmanager:/etc/alertmanager
-  #   command:
-  #     - --config.file=/etc/alertmanager/alertmanager.yml
 
   node_exporter:
     image: prom/node-exporter:latest
