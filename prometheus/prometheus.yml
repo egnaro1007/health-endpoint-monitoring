@@ -1,5 +1,5 @@
 global:
-  scrape_interval: 15s
+  scrape_interval: 5s
   evaluation_interval: 15s
   external_labels:
     monitor: "codelab-monitor"
@@ -30,12 +30,11 @@ scrape_configs:
     static_configs:
       - targets: 
         - prometheus:9090
-  - job_name: 'cadvisor'      # Prometheus taking data from cAdvisor
+  - job_name: 'cadvisor' 
     scrape_interval: 5s
     static_configs:
       - targets: 
         - cadvisor:8080
-  - job_name: 'node-exporter'      # Prometheus taking data from cAdvisor
-    static_configs:
+  - job_name: 'node-exporter' 
       - targets: 
         - node-exporter:9100
