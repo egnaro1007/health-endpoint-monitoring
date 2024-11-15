@@ -8,59 +8,19 @@ services:
     ports:
       - "80:80"
     volumes:
-      # - ./nginx.conf:/etc/nginx/conf.d/default.conf  # Mount the Nginx config file
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf  # Mount the Nginx config file
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/host.access.log:/var/log/nginx/host.access.log
     depends_on:
       - gold-price
       - rate-exchange
       - fluentd
-    
-    # logging:
-    #   driver: fluentd  
-    #   options:
-    #     fluentd-address: localhost:24224
-    #     # tag: httpd.access
-
     healthcheck:
       test: ["CMD", "service", "nginx", "status", "||", "exit", "1"]
-      interval: 1m
+      start_period: 30s
       timeout: 5s
       retries: 5
-      start_period: 30s
+      interval: 1m
 
-  nginx-prometheus-exporter:
-    image: nginx/nginx-prometheus-exporter:latest
-    container_name: nginx-prometheus-exporter
-    ports: 
-      - 9113:9113
-    command: 
-      - --nginx.scrape-uri=http://nginx:80/stub_status
-    healthcheck:
-      test: ["CMD", "wget", "--spider", "--timeout=10", "http://localhost:9113/metrics"]
-      interval: 1m
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-  
-  fluentd:
-    build: ./fluentd
-    container_name: fluentd
-    ports: 
-      - "24231:24231"
-    volumes:
-      - ./fluentd/fluent.conf:/etc/fluent/fluent.conf
-      - ./nginx/host.access.log:/var/log/nginx/access.log
-    command: 
-      - --config=/etc/fluent/fluent.conf
-    healthcheck:
-      test: ["CMD", "wget", "--spider", "--timeout=10", "http://localhost:24231/metrics"]
-      interval: 1m
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
-  # gold-price folder
   gold-price:
     build: ./gold-price
     image: gold-price/gold-price-vn:1.2.1
@@ -94,7 +54,7 @@ services:
       - database
     volumes:
       - ./rate-exchange:/app
-
+  
   database:
     image: postgres:latest
     container_name: postgres_database
@@ -108,10 +68,10 @@ services:
       - database_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
-      interval: 60s
+      start_period: 30s
       timeout: 30s
       retries: 5
-      start_period: 30s
+      interval: 60s
   
   prometheus:
     image: prom/prometheus:latest
@@ -126,31 +86,13 @@ services:
       - '--storage.tsdb.path=/prometheus'
     depends_on:
       - cadvisor
-      - node_exporter
+      - node-exporter
     healthcheck:
       test: ["CMD", "wget", "--spider", "--timeout=10", "http://localhost:9090"]
       start_period: 10s
       timeout: 10s
       retries: 5
       interval: 30s
-
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
-    container_name: cadvisor
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      # - /dev/disk/:/dev/disk:ro
-    ports:
-      - 8080:8080
-    healthcheck:
-      test: ["CMD", "wget", "--spider", "--timeout=10", "http://localhost:8080"]
-      interval: 1m
-      timeout: 5s
-      retries: 5
-      start_period: 30s
 
 #TODO: where and how to save historical data for retrieve at times when servers supposed to down
   grafana:
@@ -174,12 +116,49 @@ services:
       - --config=/etc/grafana/grafana.ini
     healthcheck:
       test: ["CMD", "wget", "--spider", "--timeout=10", "http://localhost:3000/api/health"]
-      interval: 1m
+      start_period: 30s
       timeout: 5s
       retries: 5
-      start_period: 30s
+      interval: 1m
 
-  node_exporter:
+  nginx-prometheus-exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: nginx-prometheus-exporter
+    ports: 
+      - 9113:9113
+    command: 
+      - --nginx.scrape-uri=http://nginx:80/stub_status
+      
+  fluentd:
+    build: ./fluentd
+    container_name: fluentd
+    ports: 
+      - "24231:24231"
+    volumes:
+      - ./fluentd/fluent.conf:/etc/fluent/fluent.conf
+      - ./nginx/host.access.log:/var/log/nginx/access.log
+    command: 
+      - --config=/etc/fluent/fluent.conf
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      # - /dev/disk/:/dev/disk:ro
+    ports:
+      - 8080:8080
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--timeout=10", "http://localhost:8080"]
+      start_period: 30s
+      timeout: 5s
+      retries: 5
+      interval: 1m
+
+  node-exporter:
     image: prom/node-exporter:latest
     container_name: node-exporter
     volumes:
@@ -190,10 +169,10 @@ services:
       - 9100:9100
     healthcheck:
       test: ["CMD", "wget", "--spider", "--timeout=10", "http://localhost:9100/metrics"]
-      interval: 1m
+      start_period: 30s
       timeout: 5s
       retries: 5
-      start_period: 30s
+      interval: 1m
   
   front-end:
     build: ./frontend
