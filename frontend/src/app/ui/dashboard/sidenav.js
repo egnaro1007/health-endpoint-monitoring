@@ -1,7 +1,5 @@
 import Link from 'next/link';
 import NavLinks from '@/app/ui/dashboard/nav-links';
-import { PowerIcon, HeartIcon } from '@heroicons/react/24/outline';
-import { lusitana } from '@/app/ui/fonts';
 // import { signOut } from '@/auth';
 
 export default function SideNav() {
