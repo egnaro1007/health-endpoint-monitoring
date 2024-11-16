@@ -1,4 +1,5 @@
-from sources.base_source import BaseSource, Price
+from sources.base_source import BaseSource
+from sources.dataclasses import Price
 import requests
 import random
 from bs4 import BeautifulSoup
@@ -48,4 +49,4 @@ class PNJ(BaseSource):
         buy_price = int(buy_price_element.text.strip().replace(',', '')) * 1000 * 10
         sell_price = int(sell_price_element.text.strip().replace(',', '')) * 1000 * 10
 
-        return Price(buy=buy_price, sell=sell_price)
+        return Price(company_code="pnj", buy=buy_price, sell=sell_price)

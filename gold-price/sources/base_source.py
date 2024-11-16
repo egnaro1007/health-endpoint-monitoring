@@ -1,8 +1,7 @@
 
 from abc import ABC, abstractmethod
 from collections import namedtuple
-
-Price = namedtuple('Price', ['buy', 'sell'])
+from sources.dataclasses import Price
 
 class BaseSource(ABC):
     @property

@@ -5,8 +5,8 @@ import time
 
 from dataclasses import dataclass
 
-from fastapi.responses import JSONResponse
-from sources.base_source import BaseSource, Price
+from sources.base_source import BaseSource
+from sources.dataclasses import Price
 from requests.exceptions import RequestException
 
 

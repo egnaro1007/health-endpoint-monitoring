@@ -1,6 +1,7 @@
 import os
 import time
-from fastapi import FastAPI, status
+from dataclasses import asdict
+from fastapi import FastAPI, status, HTTPException
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi.responses import JSONResponse
@@ -8,7 +9,6 @@ import psycopg2
 import sources.sjc
 import sources.doji
 import sources.pnj
-from sources.base_source import Price
 from health_check import HealthCheck
 
 # Database configuration
@@ -128,28 +128,34 @@ def get_companies():
 
 @app.get("/getprice/{company_code}")
 def get_price(company_code: str):
-    company = companies.get(company_code)
-    if not company:
-        return {"error": "Company not found"}
-    
-    code = company.company_code
+    if company_code not in companies:
+        raise HTTPException(status_code=404, detail="Not Found")
     try:
-        price = company.get_price()
+        price = companies[company_code].get_price()
+        return price
     except Exception as e:
-        price = Price(buy=0, sell=0)
-    if price is None or not isinstance(price, Price):
-        price = Price(buy=0, sell=0)
-    return {
-        "company_code": code,
-        "buy": price.buy,
-        "sell": price.sell
-    }
+        raise HTTPException(status_code=500, detail={
+            "company_code": company_code,
+            "error": "Internal Server Error"
+        })
 
 @app.get("/getprices")
 def get_prices():
     companies_price = []
     for company in companies:
-        companies_price.append(get_price(company))
+        print(company)
+        try:
+            response_data = {
+                "success": True,
+                **asdict(get_price(company))
+            }
+            companies_price.append(response_data)
+        except Exception as e:
+            print(f"Error fetching price for {company}: {e}")
+            companies_price.append({
+                "success": False,
+                "company_code": company
+            })
 
     return companies_price
 
@@ -175,4 +181,3 @@ async def get_container_status():
 @app.get("/status/containers/processes")
 async def get_container_processes():
     return HealthCheck.get_process_info()
-
