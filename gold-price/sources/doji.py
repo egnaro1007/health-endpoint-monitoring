@@ -24,7 +24,7 @@ class DOJI(BaseSource):
     
     @property
     def url(self):
-        return 'https://dojii.vn/bang-gia-vang/'
+        return 'https://doji.vn/bang-gia-vang/'
 
     def get_price(self) -> Price:
         headers = {'User-Agent': random.choice(self.User_Agent)}            
