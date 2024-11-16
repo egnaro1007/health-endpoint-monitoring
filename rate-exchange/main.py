@@ -12,7 +12,7 @@ banks = {
     "bidv": apithanhtoan.APIThanhToan("BIDV", "https://apithanhtoan.com/ty-gia/bidv/"),
     "agribank": apithanhtoan.APIThanhToan("Agribank", "https://apithanhtoan.com/ty-gia/agribank/"),
     "vietinbank": apithanhtoan.APIThanhToan("Vietinbank", "https://apithanhtoan.com/ty-gia/vietinbank/"),
-    "tpbank": apithanhtoan.APIThanhToan("TPBank", "https://apithanhtoan.com/ty-gia/tien-phong/"),
+    "tien phong": apithanhtoan.APIThanhToan("TPBank", "https://apithanhtoan.com/ty-gia/tien-phong/"),
 }
 
 @app.get("/banks")
