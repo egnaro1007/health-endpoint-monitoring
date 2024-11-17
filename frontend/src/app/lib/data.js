@@ -53,16 +53,15 @@ export async function fetchGoldEndpointsData() {
 export async function fetchGoldPricesData() {
   const apiUrl = '/gold-price/getprices';
   try {
-    const response = await axios.get(apiUrl);
-    const data = response.data;
-
     const dummyData = [
-        {company_code: "SJC", buy: 80500000, sell: 84000000},
-        {company_code: "DOJI", buy: 80500000, sell: 84000000},
-        {company_code: "PNJ", buy: 80800000, sell: 82400000},
+        {success: true, company_code: "SJC", buy: 80500000, sell: 84000000},
+        {success: false, company_code: "DOJI", buy: 80500000, sell: 84000000},
+        {success: true, company_code: "PNJ", buy: 80800000, sell: 82400000},
       ]
 
     //return dummyData; 
+    const response = await axios.get(apiUrl);
+    const data = response.data;
     return data;
   } catch (error) {
     console.error('API Error:', error);
@@ -73,12 +72,11 @@ export async function fetchGoldPricesData() {
 export async function fetchExchangeRatesData() {
   const apiUrl = '/rate-exchange/getexchangerates';
   try {
-    const response = await axios.get(apiUrl);
-    const data = response.data;
+
 
     const dummyData = [
       {
-          "success": true,
+          "success": false,
           "bank_name": "Ng%C3%A2n%20h%C3%A0ng%20TMCP%20Ngo%E1%BA%A1i%20Th%C6%B0%C6%A1ng%20Vi%E1%BB%87t%20Nam%20%28VIETCOMBANK%29",
           "bank_name_short": "Vietcombank",
           "bank_code": "BFTV",
@@ -1106,6 +1104,8 @@ export async function fetchExchangeRatesData() {
   ]
 
     //return dummyData; 
+    const response = await axios.get(apiUrl);
+    const data = response.data;
     return data;
   } catch (error) {
     console.error('API Error:', error);

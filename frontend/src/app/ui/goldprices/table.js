@@ -5,6 +5,7 @@ import { formatCurrency } from '@/app/lib/utils';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import React, { useEffect, useState } from 'react';
 import { timeAgo } from '@/app/lib/utils';
+import StatusIcon from '@/app/ui/status';
 
 export default function GoldPricesTable() {
   //const data = await fetchGoldPricesData();
@@ -40,7 +41,7 @@ export default function GoldPricesTable() {
   }, [lastUpdated]);
 
   return (
-    <div className="w-full md:col-span-4 lg:col-span-5">
+    <div className="w-full md:col-span-full">
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-[#fff8f7] p-2 md:pt-0  mx-auto">
           <div className="md:hidden">
@@ -74,6 +75,9 @@ export default function GoldPricesTable() {
                   Bank Name
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium text-[#3b080f] text-center">
+                  Status
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium text-[#3b080f] text-center">
                   Buy Price
                 </th>
                 <th scope="col" className="px-4 py-5 font-medium sm:pr-6 text-[#3b080f] text-center">
@@ -92,14 +96,19 @@ export default function GoldPricesTable() {
                       <p>{data.company_code}</p>
                     </div>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3 w-[50%] text-center">
+                  <td className="whitespace-nowrap px-3 py-3 w-[25%] text-center">
                     <div className="flex items-center gap-3 text-[#3b080f] justify-center">
-                      <p>{formatCurrency(data.buy)}</p>
+                      <StatusIcon status={data.success}/>
+                    </div>
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3 w-[25%] text-center">
+                    <div className="flex items-center gap-3 text-[#3b080f] justify-center">
+                      <p>{data.success ? formatCurrency(data.buy) : ''}</p>
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 pl-3 pr-6 w-[25%] text-center">
                     <div className="flex items-center gap-3 text-[#3b080f] justify-center">
-                      <p>{formatCurrency(data.sell)}</p>
+                      <p>{data.success ? formatCurrency(data.sell) : ''}</p>
                     </div>
                   </td>
                 </tr>
