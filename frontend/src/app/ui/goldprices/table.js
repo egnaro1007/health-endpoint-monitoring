@@ -50,20 +50,24 @@ export default function GoldPricesTable() {
                 key={data.company_code}
                 className="mb-2 w-full rounded-md bg-white p-4"
               >
-                <div className="flex items-center justify-between border-b pb-4">
-                    <div className="mb-2 flex items-center">
+                <div className="flex items-center justify-between border-b pb-2">
+                    <div className="mb-2 flex items-center text-xl text-[#3b080f]">
                       <p>{data.company_code}</p>
                     </div>
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
-                    <div>
-                        <p className="text-xl font-medium text-[#3b080f]">
-                            {formatCurrency(data.buy)}
-                        </p>
-                        <p className="text-xl font-medium text-[#3b080f]">
-                            {formatCurrency(data.sell)}
-                        </p>
-                    </div>
+                  <div className="flex flex-col">
+                    <p className="text-md text-[#765657]">Buy Price</p>
+                    <p className="text-xl font-medium text-[#3b080f]">
+                        {formatCurrency(data.buy)}
+                    </p>
+                  </div>
+                  <div className="flex flex-col text-right">
+                      <p className="text-md text-[#765657]">Sell Price</p>
+                      <p className="text-xl font-medium text-[#3b080f]">
+                          {formatCurrency(data.sell)}
+                      </p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -119,7 +123,7 @@ export default function GoldPricesTable() {
           <div className="flex items-center pt-5 pb-2 px-3 cursor-pointer"  onClick={fetchData}>
             <ArrowPathIcon className="h-5 w-5 text-[#765657]" />
             <h3 className="ml-2 text-sm text-[#765657]">
-            {isLoading ? 'Updating...' : timeAgo(lastUpdated)}
+              {isLoading ? 'Updating...' : timeAgo(lastUpdated)}
             </h3>
           </div>
         </div>

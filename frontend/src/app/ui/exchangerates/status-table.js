@@ -55,12 +55,16 @@ export default function StatusTable() {
                 className="mb-2 w-full rounded-md bg-white p-4"
               >
                 <div className="flex items-center justify-between border-b pb-4">
-                    <div className="mb-2 flex items-center w-1/3">
+                    <div className="mb-2 flex items-center w-1/3 text-xl text-[#3b080f]">
                       <p>{decodeURIComponent(data.bank_name_short)}</p>
                     </div>
 
                     <StatusIcon status={data.success} />
-                    <RateDetails bank={data.bank_name_short} success={data.success} className="h-5 w-5 text-[#765657]" />
+                    <RateDetails 
+                        bank_name_short={data.bank_name_short} 
+                        success={data.success} 
+                        className="h-5 w-5 text-[#765657]" 
+                      />
                 </div>
               </div>
             ))}

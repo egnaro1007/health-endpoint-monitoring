@@ -15,41 +15,6 @@ export async function fetchData() {
   }
 }
 
-export async function fetchGoldEndpointsData() {
-    const apiUrl = `/gold-price/status/apis`;
-    try {
-      const response = await axios.get(apiUrl);
-      const data = response.data;
-  
-      const dummyData = [
-        {
-            "company_code": "SJC",
-            "provider_connection": true,
-            "parse_data": true,
-            "endpoint_response": true
-        },
-        {
-            "company_code": "DOJI",
-            "provider_connection": true,
-            "parse_data": true,
-            "endpoint_response": true
-        },
-        {
-            "company_code": "PNJ",
-            "provider_connection": true,
-            "parse_data": true,
-            "endpoint_response": true
-        }
-    ]
-  
-      //return dummyData; 
-      return data;
-    } catch (error) {
-      console.error('API Error:', error);
-      throw new Error('Failed to fetch gold prices data.');
-    }
-  }
-
 export async function fetchGoldPricesData() {
   const apiUrl = '/gold-price/getprices';
   try {
@@ -1117,8 +1082,7 @@ export async function fetchExchangeRateByBankName(query) {
     const bank_short_name = query.bank_name_short.toLowerCase(); 
     const apiUrl = `/rate-exchange/getexchangerate/${bank_short_name}`;
   try {
-    const response = await axios.get(apiUrl);
-    const data = response.data;
+    
 
     const dummyData = {
         "bank_name": "Ng%C3%A2n%20h%C3%A0ng%20TMCP%20Ngo%E1%BA%A1i%20Th%C6%B0%C6%A1ng%20Vi%E1%BB%87t%20Nam%20%28VIETCOMBANK%29",
@@ -1310,6 +1274,8 @@ export async function fetchExchangeRateByBankName(query) {
     }
 
     //return dummyData; 
+    const response = await axios.get(apiUrl);
+    const data = response.data;
     return data;
   } catch (error) {
     console.error('API Error:', error);
