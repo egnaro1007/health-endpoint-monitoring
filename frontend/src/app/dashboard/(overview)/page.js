@@ -1,15 +1,13 @@
 import { lusitana } from '@/app/ui/fonts';
+import InfoIframe from '@/app/ui/info-iframe';
 
 export default async function Page() {
   return (
-    <main>
-      <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl text-[#3b080f]`}>
-        Dashboard
-      </h1>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <main className='h-full w-full'>
+      <div className="flex w-full items-center justify-between">
+        <h1 className={`${lusitana.className} text-xl md:text-2xl text-[#3b080f]`}>Dashboard</h1>
       </div>
-      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
-      </div>
+      <InfoIframe link="/grafana/d/nginxdas/request-count?kiosk&theme=light"/>
     </main>
   );
 }

@@ -41,7 +41,7 @@ export async function fetchExchangeRatesData() {
 
     const dummyData = [
       {
-          "success": false,
+          "success": true,
           "bank_name": "Ng%C3%A2n%20h%C3%A0ng%20TMCP%20Ngo%E1%BA%A1i%20Th%C6%B0%C6%A1ng%20Vi%E1%BB%87t%20Nam%20%28VIETCOMBANK%29",
           "bank_name_short": "Vietcombank",
           "bank_code": "BFTV",
@@ -1079,7 +1079,7 @@ export async function fetchExchangeRatesData() {
 }
 
 export async function fetchExchangeRateByBankName(query) {
-    const bank_short_name = query.bank_name_short.toLowerCase(); 
+    const bank_short_name = query.toLowerCase(); 
     const apiUrl = `/rate-exchange/getexchangerate/${bank_short_name}`;
   try {
     
