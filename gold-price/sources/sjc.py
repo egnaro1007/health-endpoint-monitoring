@@ -40,4 +40,4 @@ class SJC(BaseSource):
         except Exception as e:
             raise ValueError("Cannot fetch buy and sell price")
 
-        return Price(company_code="sjc", buy=buy_price, sell=sell_price)
+        return Price(company_code=self.company_code, buy=buy_price, sell=sell_price)

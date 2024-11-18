@@ -49,4 +49,4 @@ class DOJI(BaseSource):
         buy_price = int(buy_price_element.text.strip().replace(',', '')) * 1000 * 10
         sell_price = int(sell_price_element.text.strip().replace(',', '')) * 1000 * 10
 
-        return Price(company_code="doji", buy=buy_price, sell=sell_price)
+        return Price(company_code=self.company_code, buy=buy_price, sell=sell_price)

@@ -180,3 +180,15 @@ services:
     container_name: front-end
     expose:
       - "3000"
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    depends_on:
+      - prometheus
+    ports:
+      - 9093:9093
+    volumes:
+      - ./alertmanager:/etc/alertmanager
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml

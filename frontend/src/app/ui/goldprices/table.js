@@ -17,6 +17,9 @@ export default function GoldPricesTable() {
 
   const fetchData = async () => {
     setIsLoading(true);  
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000); 
+
     try {
       const fetchedData = await fetchGoldPricesData();  
       setData(fetchedData);  
@@ -24,6 +27,7 @@ export default function GoldPricesTable() {
     } catch (error) {
       console.error("Failed to fetch gold prices", error);
     } finally {
+      clearTimeout(timeoutId)
       setIsLoading(false); 
     }
   };

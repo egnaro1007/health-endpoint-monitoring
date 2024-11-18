@@ -25,9 +25,9 @@ sjc = sources.sjc.SJC()
 doji = sources.doji.DOJI()
 pnj = sources.pnj.PNJ()
 companies = {
-    "sjc": sjc,
-    "doji": doji,
-    "pnj": pnj
+    "SJC": sjc,
+    "DOJI": doji,
+    "PNJ": pnj
 }
 
 

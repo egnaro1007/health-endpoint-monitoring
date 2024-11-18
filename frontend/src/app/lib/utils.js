@@ -1,14 +1,18 @@
 export const formatCurrency = (amount) => {
-  const numericAmount = parseFloat(amount.toString().replace(/,/g, ''));
-
-  if (isNaN(numericAmount)) {
-    return ''; 
+  if (amount) {
+    const numericAmount = parseFloat(amount.toString().replace(/,/g, ''));
+  
+    if (isNaN(numericAmount)) {
+      return ''; 
+    }
+  
+    return numericAmount.toLocaleString('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    });
+  } else {
+    return ''
   }
-
-  return numericAmount.toLocaleString('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-  });
 };
 
 export const formatDateToLocal = (dateStr, locale = 'vi-VN') => {

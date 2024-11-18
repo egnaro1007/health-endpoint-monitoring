@@ -51,12 +51,12 @@ export default function StatusTable() {
           <div className="md:hidden">
             {data?.map((data) => (
               <div
-                key={data.bank_code}
+                key={data.bank_name_short}
                 className="mb-2 w-full rounded-md bg-white p-4"
               >
                 <div className="flex items-center justify-between border-b pb-4">
                     <div className="mb-2 flex items-center w-1/3">
-                      <p>{decodeURIComponent(data.bank_name_short)}</p>
+                      <p>{decodeURIComponent(data.bank_name_short).toUpperCase()}</p>
                     </div>
 
                     <StatusIcon status={data.success} />
@@ -82,12 +82,12 @@ export default function StatusTable() {
             <tbody className="bg-white">
               {data?.map((data) => (
                 <tr
-                  key={data.bank_code}
+                  key={data.bank_name_short}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3 ">
                     <div className="flex items-center gap-3 text-[#3b080f]">
-                      <p>{decodeURIComponent(data.bank_name_short)}</p>
+                      <p>{decodeURIComponent(data.bank_name_short).toUpperCase()}</p>
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3 text-center w-1/3">
