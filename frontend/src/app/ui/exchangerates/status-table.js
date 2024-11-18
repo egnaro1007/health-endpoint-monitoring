@@ -60,7 +60,11 @@ export default function StatusTable() {
                     </div>
 
                     <StatusIcon status={data.success} />
-                    <RateDetails bank={data.bank_name_short} success={data.success} className="h-5 w-5 text-[#765657]" />
+                    <RateDetails 
+                        bank_name_short={data.bank_name_short} 
+                        success={data.success} 
+                        className="h-5 w-5 text-[#765657]" 
+                      />
                 </div>
               </div>
             ))}
