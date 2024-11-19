@@ -11,9 +11,14 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/host.access.log:/var/log/nginx/host.access.log
     depends_on:
-      - gold-price
-      - rate-exchange
-      - fluentd
+      gold-price:
+        condition: service_started
+      rate-exchange:
+        condition: service_started
+      fluentd:
+        condition: service_started
+      grafana:
+        condition: service_started
     healthcheck:
       test: ["CMD", "service", "nginx", "status", "||", "exit", "1"]
       start_period: 30s
@@ -34,7 +39,8 @@ services:
     expose:
       - "8000"
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     volumes:
       - ./gold-price:/app
 
@@ -51,7 +57,8 @@ services:
     expose:
       - "8000"
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     volumes:
       - ./rate-exchange:/app
   
@@ -68,8 +75,8 @@ services:
       - database_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
-      start_period: 30s
-      timeout: 30s
+      start_period: 10s
+      timeout: 5s
       retries: 5
       interval: 60s
   
@@ -84,13 +91,16 @@ services:
     command: 
       - --config.file=/etc/prometheus/prometheus.yml
       - '--storage.tsdb.path=/prometheus'
+      - --query.lookback-delta=100m
     depends_on:
-      - cadvisor
-      - node-exporter
+      cadvisor:
+        condition: service_started
+      node-exporter:
+        condition: service_started
     healthcheck:
       test: ["CMD", "wget", "--spider", "--timeout=10", "http://localhost:9090"]
       start_period: 10s
-      timeout: 10s
+      timeout: 5s
       retries: 5
       interval: 30s
 
@@ -107,8 +117,10 @@ services:
       - ./grafana/dashboards:/var/lib/grafana/dashboards
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
     depends_on:
-      - prometheus
-      - database
+      prometheus:
+        condition: service_healthy
+      database:
+        condition: service_healthy
     ports:
       - 3000:3000
     command:
@@ -116,8 +128,8 @@ services:
       - --config=/etc/grafana/grafana.ini
     healthcheck:
       test: ["CMD", "wget", "--spider", "--timeout=10", "http://localhost:3000/api/health"]
-      start_period: 30s
-      timeout: 5s
+      start_period: 1m
+      timeout: 30s
       retries: 5
       interval: 1m
 
@@ -192,3 +204,9 @@ services:
       - ./alertmanager:/etc/alertmanager
     command:
       - --config.file=/etc/alertmanager/alertmanager.yml
+  
+  # stress-test:
+  #   image: polinux/stress:latest
+  #   container_name: stress-test
+  #   command:
+  #     - "sleep infinity"
