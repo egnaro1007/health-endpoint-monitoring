@@ -209,4 +209,4 @@ services:
   #   image: polinux/stress:latest
   #   container_name: stress-test
   #   command:
-  #     - "sleep infinity"
+        # docker run -ti --rm polinux/stress stress --cpu 1 --io 1 --vm 1 --vm-bytes 128M --timeout 180s --verbose  
