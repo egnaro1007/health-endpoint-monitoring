@@ -11,7 +11,7 @@ export default function Page() {
       <div className="flex w-full items-center justify-between">
         <h1 className={`${lusitana.className} text-xl md:text-2xl text-[#3b080f]`}>API Response Time</h1>
       </div>
-      <InfoIframe link=""/>
+      <InfoIframe link="/grafana/d/LatencyDas/api-response-time?kiosk&theme=light"/>
     </div>
   );
 }
