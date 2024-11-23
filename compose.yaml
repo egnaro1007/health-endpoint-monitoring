@@ -11,14 +11,9 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/host.access.log:/var/log/nginx/host.access.log
     depends_on:
-      gold-price:
-        condition: service_started
-      rate-exchange:
-        condition: service_started
-      fluentd:
-        condition: service_started
-      grafana:
-        condition: service_started
+      - gold-price
+      - rate-exchange
+      - grafana
     healthcheck:
       test: ["CMD", "service", "nginx", "status", "||", "exit", "1"]
       start_period: 30s
