@@ -17,17 +17,7 @@ this data on dashboards.
 
 ## Installation
 
-### 1. Windows
-
-Stay tuned for new updates (。・・)ノ
-
-### 2. Mac OS
-
-Stay tuned for new updates (。・・)ノ
-
-### 3. Linux
-
-Stay tuned for new updates (。・・)ノ
+Just "docker compose up"
 
 ## Credits
 
@@ -42,7 +32,7 @@ Please make sure to update tests as appropriate.
 
 ## License
 
-This is a non-commercial project 
+GNU General Public License 
 
 ## Support
 
