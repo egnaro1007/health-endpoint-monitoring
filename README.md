@@ -1,7 +1,7 @@
 # Health Endpoint Monitoring
 
-A project using Health Endpoint Monitoring (HEM) pattern to monitor 2 container Docker, one containing 1 API endpoint that updates gold prices in Vietnam, 
-the other one containing 1 API endpoint that updates foreign exchange rate against VND.
+A project using Health Endpoint Monitoring (HEM) pattern to monitor 2 container Docker, one containing API endpoint that updates gold prices in Vietnam, 
+the other one containing API endpoint that updates foreign exchange rate against VND.
 
 ## Description
 
@@ -14,6 +14,18 @@ resource data. These metrics are collected by Prometheus, which also triggers al
 NGINX functions as a reverse proxy, routing traffic to endpoints and gathering metrics related to connections and errors. NGINX logs are processed 
 by Fluentd for monitoring insights. PostgreSQL is used to store historical gold prices and exchange rates, while the frontend (NextJS) displays 
 this data on dashboards.
+
+## Some dashboards
+
+### Service Response Time
+![Service Response Time](/docs/images/picture01.png)
+### Service Request Counter & Error Rate
+![Service Request Counter & Error Rate](/docs/images/picture02.png)
+### System Overview
+![System Overview](/docs/images/picture03.png)
+### System Resource Usage
+![System Resource Usage](/docs/images/picture04.png)
+
 
 ## Installation
 
